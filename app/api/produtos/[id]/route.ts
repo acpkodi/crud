@@ -1,4 +1,4 @@
-import { products } from "@/app/dados";
+import { cnDB } from "@/db"
 import { NextRequest } from "next/server";
 import { stringify } from "querystring";
 
@@ -10,7 +10,8 @@ type Params = {
 
 export async function GET(request: NextRequest, {params}: {params:Params}){
     const prodId = params.id;
-    const prod = products.find(p=>p.id === prodId);
+    const { db } = await cnDB();
+    const prod = db.collection("produtos").find({id: prodId});
     
     if(!prod){
         return new Response("Produto não encontrado", {
