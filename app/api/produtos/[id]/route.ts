@@ -11,7 +11,7 @@ type Params = {
 export async function GET(request: NextRequest, {params}: {params:Params}){
     const prodId = params.id;
     const { db } = await cnDB();
-    const prod = db.collection("produtos").find({id: prodId});
+    const prod = await db.collection("produtos").find({id: prodId});
     
     if(!prod){
         return new Response("Produto não encontrado", {
