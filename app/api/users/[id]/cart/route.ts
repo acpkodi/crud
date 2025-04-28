@@ -60,14 +60,28 @@ export async function POST(request: NextRequest, { params }: { params: Params })
   });
 }
 
-/*
 export async function DELETE(request: NextRequest, { params }: { params: Params }) {
+  const { db } = await cnDB();
   const userId = params.id;
   const body: CartBody = await request.json();
   const productId = body.productId;
 
-  carts[userId] = carts[userId] ? carts[userId].filter(p=> p !== productId) : [];  
-  const cartProducts = carts[userId].map(id => products.find(p => p.id === id));
+  const updateCart = await db.collection("carts").findOneAndUpdate(
+    { userId },
+    { $pull: { cartIds: productId }},
+    { returnDocument: 'after' }
+  );
+
+  if(!updateCart){
+    return new Response(JSON.stringify([]), {
+      status: 202,
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+  }
+
+  const cartProducts = await db.collection("produtos").find({ id: { $in: updateCart.value?.cartIds || [] } }).toArray();  
 
   return new Response(JSON.stringify(cartProducts), {
     status: 202,
@@ -77,4 +91,3 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
   });
  
 }
-   */
