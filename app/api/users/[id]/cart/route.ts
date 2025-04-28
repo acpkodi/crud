@@ -49,10 +49,12 @@ export async function POST(request: NextRequest, { params }: { params: Params })
     { $push: { cartIds: productId }},
     { upsert: true, returnDocument: 'after' }
   );
-
-    const cartProducts = await db.collection("produtos").find({ id: { $in: updateCart.value?.cartIds || [] } }).toArray();
-
-  return new Response(JSON.stringify(cartProducts), {
+      
+    const cart = updateCart.value || await db.collection("carts").findOne({ userId });
+    console.log('Carrinho atualizado:', cart);
+    const cartProducts = await db.collection("produtos").find({ id: { $in: cart?.cartIds || [] } }).toArray();  
+  
+    return new Response(JSON.stringify(cartProducts), {
     status: 201,
     headers: {
       'Content-Type': 'application/json',
@@ -72,7 +74,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
     { returnDocument: 'after' }
   );
 
-  if(!updateCart){
+  if (!updateCart.value) {
     return new Response(JSON.stringify([]), {
       status: 202,
       headers: {
@@ -81,7 +83,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
     });
   }
 
-  const cartProducts = await db.collection("produtos").find({ id: { $in: updateCart.value?.cartIds || [] } }).toArray();  
+  const cartProducts = await db.collection("produtos").find({ id: { $in: updateCart.value.cartIds } }).toArray();
 
   return new Response(JSON.stringify(cartProducts), {
     status: 202,
@@ -89,5 +91,4 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
       'Content-Type': 'application/json',
     }
   });
- 
 }
