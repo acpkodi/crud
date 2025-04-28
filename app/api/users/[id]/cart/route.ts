@@ -68,27 +68,52 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
   const body: CartBody = await request.json();
   const productId = body.productId;
 
+  // Verifica a remoção do item
   const updateCart = await db.collection("carts").findOneAndUpdate(
     { userId },
-    { $pull: { cartIds: productId }},
+    { $pull: { cartIds: productId } },
     { returnDocument: 'after' }
   );
 
+  // Verifica se o documento foi alterado
   if (!updateCart.value) {
-    return new Response(JSON.stringify([]), {
-      status: 202,
+    return new Response(
+      JSON.stringify({ message: "Item não encontrado ou não removido." }),
+      {
+        status: 404,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+  }
+
+  // Busca os produtos restantes no carrinho
+  const cartProducts = await db
+    .collection("produtos")
+    .find({ id: { $in: updateCart.value.cartIds } })
+    .toArray();
+
+  // Verifica se há produtos no carrinho após a remoção
+  if (cartProducts.length === 0) {
+    return new Response(
+      JSON.stringify({ message: "Carrinho vazio." }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+  }
+
+  return new Response(
+    JSON.stringify({ message: "Produto removido com sucesso", products: cartProducts }),
+    {
+      status: 200,
       headers: {
         'Content-Type': 'application/json',
       }
-    });
-  }
-
-  const cartProducts = await db.collection("produtos").find({ id: { $in: updateCart.value.cartIds } }).toArray();
-
-  return new Response(JSON.stringify(cartProducts), {
-    status: 202,
-    headers: {
-      'Content-Type': 'application/json',
     }
-  });
+  );
 }
