@@ -65,78 +65,30 @@ export async function POST(request: NextRequest, { params }: { params: Params })
 export async function DELETE(request: NextRequest, { params }: { params: Params }) {
   const { db } = await cnDB();
   const userId = params.id;
-  const body: CartBody = await request.json();
+  const body = await request.json();
   const productId = body.productId;
-
-  // Verifica se o produto está presente no carrinho
-  const userCart = await db.collection("carts").findOne({ userId });
-
-  if (!userCart || !userCart.cartIds.includes(productId)) {
-    return new Response(
-      JSON.stringify({ message: "Produto não encontrado no carrinho." }),
-      {
-        status: 404,
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      }
-    );
-  }
 
   // Realiza a remoção do produto do carrinho
   const updateCart = await db.collection("carts").findOneAndUpdate(
     { userId },
     { $pull: { cartIds: productId } },
     { returnDocument: 'after' }
-  );
-
-  console.log("updateCart:", updateCart);  // Adicionando log para depuração
+  );  
 
   // Verifica se a atualização foi bem-sucedida
   if (!updateCart.value) {
     return new Response(
-      JSON.stringify({ message: "Falha ao remover o produto do carrinho." }),
+      JSON.stringify([]),
       {
-        status: 500,
+        status: 202,
         headers: {
           'Content-Type': 'application/json',
         }
       }
     );
   }
-
-  // Verifique se o array de cartIds foi realmente atualizado
-  const updatedCartIds = updateCart.value.cartIds;
-  if (!updatedCartIds || updatedCartIds.length === 0) {
-    return new Response(
-      JSON.stringify({ message: "Carrinho vazio após remoção." }),
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      }
-    );
-  }
-
-  // Busca os produtos restantes no carrinho após a remoção
-  const cartProducts = await db
-    .collection("produtos")
-    .find({ id: { $in: updatedCartIds } })
-    .toArray();
-
-  // Verifica se existem produtos no carrinho após a remoção
-  if (cartProducts.length === 0) {
-    return new Response(
-      JSON.stringify({ message: "Carrinho vazio após remoção." }),
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      }
-    );
-  }
+  
+  const cartProducts = await db.collection("produtos").find({ id: { $in: updateCart.cartIds } }).toArray();  
 
   return new Response(
     JSON.stringify({ message: "Produto removido com sucesso", products: cartProducts }),
