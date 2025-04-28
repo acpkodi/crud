@@ -68,17 +68,12 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
   const body: CartBody = await request.json();
   const productId = body.productId;
 
-  // Verifica a remoção do item
-  const updateCart = await db.collection("carts").findOneAndUpdate(
-    { userId },
-    { $pull: { cartIds: productId } },
-    { returnDocument: 'after' }
-  );
+  // Verifica se o produto está presente no carrinho
+  const userCart = await db.collection("carts").findOne({ userId });
 
-  // Verifica se o documento foi alterado
-  if (!updateCart.value) {
+  if (!userCart || !userCart.cartIds.includes(productId)) {
     return new Response(
-      JSON.stringify({ message: "Item não encontrado ou não removido." }),
+      JSON.stringify({ message: "Produto não encontrado no carrinho." }),
       {
         status: 404,
         headers: {
@@ -88,16 +83,52 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
     );
   }
 
-  // Busca os produtos restantes no carrinho
+  // Realiza a remoção do produto do carrinho
+  const updateCart = await db.collection("carts").findOneAndUpdate(
+    { userId },
+    { $pull: { cartIds: productId } },
+    { returnDocument: 'after' }
+  );
+
+  console.log("updateCart:", updateCart);  // Adicionando log para depuração
+
+  // Verifica se a atualização foi bem-sucedida
+  if (!updateCart.value) {
+    return new Response(
+      JSON.stringify({ message: "Falha ao remover o produto do carrinho." }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+  }
+
+  // Verifique se o array de cartIds foi realmente atualizado
+  const updatedCartIds = updateCart.value.cartIds;
+  if (!updatedCartIds || updatedCartIds.length === 0) {
+    return new Response(
+      JSON.stringify({ message: "Carrinho vazio após remoção." }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+  }
+
+  // Busca os produtos restantes no carrinho após a remoção
   const cartProducts = await db
     .collection("produtos")
-    .find({ id: { $in: updateCart.value.cartIds } })
+    .find({ id: { $in: updatedCartIds } })
     .toArray();
 
-  // Verifica se há produtos no carrinho após a remoção
+  // Verifica se existem produtos no carrinho após a remoção
   if (cartProducts.length === 0) {
     return new Response(
-      JSON.stringify({ message: "Carrinho vazio." }),
+      JSON.stringify({ message: "Carrinho vazio após remoção." }),
       {
         status: 200,
         headers: {
