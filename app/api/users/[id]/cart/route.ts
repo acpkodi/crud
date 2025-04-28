@@ -1,5 +1,6 @@
-import { NextRequest } from 'next/server';
 import { cnDB } from "@/db";
+import { NextRequest } from 'next/server';
+
 
 type ShoppingCart = Record<string, string[]>;
 
@@ -37,19 +38,19 @@ type CartBody = {
 }
 
 export async function POST(request: NextRequest, { params }: { params: Params }) {
-  
   const { db } = await cnDB();
   const userId = params.id;
+  
   const body: CartBody = await request.json();
   const productId = body.productId;
 
-  const updateCart = db.collection('carts').findOneAndUpdate(
+  const updateCart = await db.collection("carts").findOneAndUpdate(
     { userId },
     { $push: { cartIds: productId }},
     { upsert: true, returnDocument: 'after' }
   );
 
-  const cartProducts = await db.collection("produtos").find({ id: { $in: updateCart.cartIds } }).toArray()
+    const cartProducts = await db.collection("produtos").find({ id: { $in: updateCart.value?.cartIds || [] } }).toArray();
 
   return new Response(JSON.stringify(cartProducts), {
     status: 201,
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest, { params }: { params: Params })
     }
   });
 }
+
 /*
 export async function DELETE(request: NextRequest, { params }: { params: Params }) {
   const userId = params.id;
