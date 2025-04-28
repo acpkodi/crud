@@ -68,9 +68,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
   const body = await request.json();
   const productId = body.productId;
 
-  // Log para verificar o userId e o productId recebidos
-  console.log(userId: ${userId}, productId: ${productId});
-
   // Realiza a remoção do produto do carrinho
   const updateCart = await db.collection("carts").findOneAndUpdate(
     { userId },
@@ -78,10 +75,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
     { returnDocument: 'after' }
   );
 
-  // Log para verificar o que foi retornado após o update
-  console.log('updateCart:', updateCart);
-
-
+  
   // Obtém os produtos restantes no carrinho
  
   const userCarts = await db.collection('carts').findOne({ userId: userId });
@@ -89,9 +83,6 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
 
   const cartProducts = await db.collection("produtos").find({ id: { $in: cartId } }).toArray();
   
-
-
-  // Retorna os produtos restantes no carrinho
   return new Response(
     JSON.stringify({ message: "Produto removido com sucesso", products: cartProducts }),
     {
