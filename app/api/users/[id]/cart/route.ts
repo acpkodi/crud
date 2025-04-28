@@ -68,28 +68,30 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
   const body = await request.json();
   const productId = body.productId;
 
+  // Log para verificar o userId e o productId recebidos
+  console.log(userId: ${userId}, productId: ${productId});
+
   // Realiza a remoção do produto do carrinho
   const updateCart = await db.collection("carts").findOneAndUpdate(
     { userId },
     { $pull: { cartIds: productId } },
     { returnDocument: 'after' }
-  );  
+  );
 
-  // Verifica se a atualização foi bem-sucedida
-  if (!updateCart.value) {
-    return new Response(
-      JSON.stringify([]),
-      {
-        status: 202,
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      }
-    );
-  }
+  // Log para verificar o que foi retornado após o update
+  console.log('updateCart:', updateCart);
+
+
+  // Obtém os produtos restantes no carrinho
+ 
+  const userCarts = await db.collection('carts').findOne({ userId: userId });
+  const cartId = userCarts.cartIds;                                                      
+
+  const cartProducts = await db.collection("produtos").find({ id: { $in: cartId } }).toArray();
   
-  const cartProducts = await db.collection("produtos").find({ id: { $in: updateCart.cartIds } }).toArray();  
 
+
+  // Retorna os produtos restantes no carrinho
   return new Response(
     JSON.stringify({ message: "Produto removido com sucesso", products: cartProducts }),
     {
