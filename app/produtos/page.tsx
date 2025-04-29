@@ -1,7 +1,7 @@
 import ListaProdutos from "../ListaProdutos";
 
 export default async function ProdutosPage(){
-	const cn = await fetch("https://acpteste.netlify.app/produtos");
+	const cn = await fetch("https://acpteste.netlify.app/api/produtos");
 	const prod = await cn.json();
 
 	return (
