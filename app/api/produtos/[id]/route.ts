@@ -1,7 +1,5 @@
 import { cnDB } from "@/db"
 import { NextRequest } from "next/server";
-import { stringify } from "querystring";
-
 
 type Params = {
     id:string;

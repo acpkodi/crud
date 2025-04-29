@@ -1,3 +1,4 @@
 {
+  "/teste/login/page": "app/teste/login/page.js",
   "/api/users/[id]/cart/route": "app/api/users/[id]/cart/route.js"
 }
