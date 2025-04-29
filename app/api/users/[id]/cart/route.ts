@@ -2,8 +2,6 @@ import { cnDB } from "@/db";
 import { NextRequest } from 'next/server';
 
 
-type ShoppingCart = Record<string, string[]>;
-
 type Params = {
   id: string;
 }
