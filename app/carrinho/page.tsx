@@ -1,24 +1,12 @@
-'use client'
-import { useState } from "react";
-import { products } from "../dados";
-import Link from "next/link";
+import CartProd from "./carProd";
 
-export default function CartPage(){
+export default async function CartPage(){
 	
-	const [carrinho] = useState(['123', '345']);
+	const cn = await fetch("https://acpteste.netlify.app/api/users/2/cart");
+	const carprodutos = await cn.json() 
 
-	const cartProdutos = carrinho.map(id => products.find(p=> p.id === id)!);
-
-	return (
-<>
-		<h1>Carrinho</h1>
-		{cartProdutos.map(prod => (
-			<Link key={prod.id} href={"/produtos/" + prod.id}>
-				<h3>{prod.name}</h3>
-				<p>R${prod.price}</p>
-			</Link>
-		))}
-</>
-)
+	return(
+		<CartProd prodcar={carprodutos} />
+	)
 	
 }
