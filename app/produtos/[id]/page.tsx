@@ -1,4 +1,3 @@
-import { products } from "@/app/dados"
 import NotFound from "@/app/not-found";
 
 export default async function ProdDetalhesPage({params} : {params: {id: string}}){
