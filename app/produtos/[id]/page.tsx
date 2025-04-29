@@ -4,7 +4,7 @@ import NotFound from "@/app/not-found";
 export default async function ProdDetalhesPage({params} : {params: {id: string}}){
 	
 	const cn = await fetch("https://acpteste.netlify.app/api/produtos/" + params.id)
-	const prod = cn.json();
+	const prod = await cn.json();
 	
 	if(!prod){
 		return <NotFound/>
