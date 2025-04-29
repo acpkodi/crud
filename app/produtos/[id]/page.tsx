@@ -1,9 +1,10 @@
 import { products } from "@/app/dados"
 import NotFound from "@/app/not-found";
 
-export default function ProdDetalhesPage({params} : {params: {id: string}}){
+export default async function ProdDetalhesPage({params} : {params: {id: string}}){
 	
-	const prod = products.find(p => p.id === params.id);
+	const cn = await fetch("https://acpteste.netlify.app/api/produtos/" + params.id)
+	const prod = cn.json();
 	
 	if(!prod){
 		return <NotFound/>
