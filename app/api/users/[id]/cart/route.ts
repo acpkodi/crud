@@ -44,11 +44,11 @@ export async function POST(request: NextRequest, { params }: { params: Params })
 
   const updateCart = await db.collection("carts").findOneAndUpdate(
     { userId },
-    { $push: { cartIds: productId }},
+    { $addToSet: { cartIds: productId }},
     { upsert: true, returnDocument: 'after' }
   );
       
-    const cart = updateCart.value || await db.collection("carts").findOne({ userId });
+    const cart = updateCart!.value || await db.collection("carts").findOne({ userId });
     const cartProducts = await db.collection("produtos").find({ id: { $in: cart?.cartIds || [] } }).toArray();  
   
     return new Response(JSON.stringify(cartProducts), {
@@ -76,7 +76,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
   // Obtém os produtos restantes no carrinho
  
   const userCarts = await db.collection('carts').findOne({ userId: userId });
-  const cartId = userCarts.cartIds;                                                      
+  const cartId = userCarts!.cartIds;                                                      
 
   const cartProducts = await db.collection("produtos").find({ id: { $in: cartId } }).toArray();
   
