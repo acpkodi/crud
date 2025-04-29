@@ -48,7 +48,7 @@ export async function POST(request: NextRequest, { params }: { params: Params })
     { upsert: true, returnDocument: 'after' }
   );
       
-    const cart = updateCart || await db.collection("carts").findOne({ userId });
+    const cart = updateCart.value || await db.collection("carts").findOne({ userId });
     const cartProducts = await db.collection("produtos").find({ id: { $in: cart?.cartIds || [] } }).toArray();  
   
     return new Response(JSON.stringify(cartProducts), {
