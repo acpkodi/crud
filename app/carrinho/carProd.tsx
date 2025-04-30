@@ -12,7 +12,7 @@ export default async function CartProd({ prodcar }:  { prodcar : Product[] }){
 		<h1>Carrinho</h1>
 		{cartProdutos.map(prod => (
 			<Link key={prod.id} href={"/produtos/" + prod.id}>
-				<div><img src={"/"+prod.imageUrl} alt="imagem" /></div>
+				<div ><img className="w-full h-auto shadow-md" src={"/" + prod.imageUrl} alt="Imagem" /></div>
 				<h3>{prod.name}</h3>
 				<p>R${prod.price}</p>
 			</Link>
