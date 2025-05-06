@@ -32,7 +32,7 @@ export default function ListaProdutos({produtos, prodInicial}:{produtos: Product
 						<Image src={"/"+p.imageUrl} alt="Imagem do produto" width={150} height={150}  />
 						<h2>{p.name}</h2>
 						<p>R${p.price}</p>
-						<button onClick={() => addToCart(p.id)}>Comprar</button>
+						<button className='p-4 bg-amber-400 text-indigo-700' onClick={() => addToCart(p.id)}>Comprar</button>
 
 					</Link>
 				))
