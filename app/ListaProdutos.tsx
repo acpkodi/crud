@@ -28,13 +28,15 @@ export default function ListaProdutos({produtos, prodInicial}:{produtos: Product
 		<div>
 			{
 				produtos.map(p=>(
+					<>
 					<Link key={p.id} href={"/produtos/"+p.id}>
 						<Image src={"/"+p.imageUrl} alt="Imagem do produto" width={150} height={150}  />
 						<h2>{p.name}</h2>
-						<p>R${p.price}</p>
-						<button className='p-4 m-4 bg-amber-400 text-indigo-700 hover:bg-amber-600' onClick={() => addToCart(p.id)}>Comprar</button>
+						<p>R${p.price}</p>	
 
 					</Link>
+					<button className='p-4 m-4 bg-amber-400 text-indigo-700 hover:bg-amber-600' onClick={() => addToCart(p.id)}>Comprar</button>
+					</>
 				))
 			}
 		</div>
