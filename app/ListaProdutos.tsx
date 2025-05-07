@@ -52,9 +52,9 @@ export default function ListaProdutos({ produtos, prodInicial }: ListaProdutosPr
       {produtos.map((p) => (
         <div
           key={p.id}
-          className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition duration-300"
+          className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 flex flex-col h-full"
         >
-          <Link href={`/produtos/${p.id}`} className="block p-4">
+          <Link href={`/produtos/${p.id}`} className="flex-grow p-4 block">
             <div className="flex justify-center">
               <Image
                 src={`/${p.imageUrl}`}
@@ -67,14 +67,15 @@ export default function ListaProdutos({ produtos, prodInicial }: ListaProdutosPr
             <h2 className="mt-4 text-xl font-semibold text-gray-800">{p.name}</h2>
             <p className="text-gray-600">R$ {p.price.toFixed(2)}</p>
           </Link>
-          <div className="px-4 pb-4">
+
+          <div className="p-4 pt-0 mt-auto">
             {checkCar(p.id) ? (
               <button
                 onClick={(e) => {
                   e.preventDefault();
                   removeProd(p.id);
                 }}
-                className="w-full mt-2 py-2 rounded-xl bg-red-100 text-red-700 font-semibold hover:bg-red-200 transition"
+                className="w-full py-2 rounded-xl bg-red-100 text-red-700 font-semibold hover:bg-red-200 transition"
               >
                 Desistir
               </button>
@@ -84,7 +85,7 @@ export default function ListaProdutos({ produtos, prodInicial }: ListaProdutosPr
                   e.preventDefault();
                   addToCart(p.id);
                 }}
-                className="w-full mt-2 py-2 rounded-xl bg-amber-400 text-indigo-800 font-semibold hover:bg-amber-500 transition"
+                className="w-full py-2 rounded-xl bg-amber-400 text-indigo-800 font-semibold hover:bg-amber-500 transition"
               >
                 Comprar
               </button>
