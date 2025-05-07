@@ -25,6 +25,21 @@ export default function ListaProdutos({produtos, prodInicial}:{produtos: Product
 		setCar(atualizaCar)
 	}
 
+	async function removeProd(productId:string){
+		const cn = await fetch("https://acpteste.netlify.app/api/users/1/cart",{
+			method: "DELETE", 
+			body: JSON.stringify({
+				productId
+			}),
+			headers:{
+				'Content-Type' : 'application/json'
+			}
+		});
+
+		const atualizaCar = await cn.json();
+		setCar(atualizaCar)
+	}
+
 	function checkCar(productId: string){
 		return carProd.some(cp => cp.id === productId)
 	}
@@ -42,7 +57,7 @@ export default function ListaProdutos({produtos, prodInicial}:{produtos: Product
 					{checkCar(p.id) ? (
 						<button className='p-4 m-4 bg-amber-400 text-indigo-700 hover:bg-amber-600' onClick={
 							(e) => { e.preventDefault(); 
-							console.log("removendo teste");}
+								removeProd(p.id);}
 							}>Desistir</button>
 					) : (
 						<button className='p-4 m-4 bg-amber-400 text-indigo-700 hover:bg-amber-600' onClick={
