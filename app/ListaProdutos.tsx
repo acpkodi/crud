@@ -26,6 +26,7 @@ export default function ListaProdutos({produtos, prodInicial}:{produtos: Product
 	}
 
 	async function removeProd(productId:string){
+		try{
 		const cn = await fetch("https://acpteste.netlify.app/api/users/1/cart",{
 			method: "DELETE", 
 			body: JSON.stringify({
@@ -38,6 +39,9 @@ export default function ListaProdutos({produtos, prodInicial}:{produtos: Product
 
 		const atualizaCar = await cn.json();
 		setCar(atualizaCar)
+		}catch(e){
+			console.log("Erro "+ e)
+		}
 	}
 
 	function checkCar(productId: string){
