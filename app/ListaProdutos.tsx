@@ -1,85 +1,97 @@
 'use client';
 
-import  Image  from 'next/image';
-import  Link  from 'next/link';
-import { Product } from "./dados";
+import Image from 'next/image';
+import Link from 'next/link';
+import { Product } from './dados';
 import { useState } from 'react';
 
+interface ListaProdutosProps {
+  produtos: Product[];
+  prodInicial: Product[];
+}
 
-export default function ListaProdutos({produtos, prodInicial}:{produtos: Product[], prodInicial: Product[]}){
+export default function ListaProdutos({ produtos, prodInicial }: ListaProdutosProps) {
+  const [carProd, setCar] = useState(prodInicial);
 
-	const [carProd, setCar] = useState(prodInicial); 
+  async function addToCart(productId: string) {
+    try {
+      const res = await fetch('https://acpteste.netlify.app/api/users/1/cart', {
+        method: 'POST',
+        body: JSON.stringify({ productId }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-	async function addToCart(productId:string){
-		const cn = await fetch("https://acpteste.netlify.app/api/users/1/cart",{
-			method: "POST", 
-			body: JSON.stringify({
-				productId
-			}),
-			headers:{
-				'Content-Type' : 'application/json'
-			}
-		});
+      const atualizado = await res.json();
+      setCar(atualizado);
+    } catch (error) {
+      console.error('Erro ao adicionar:', error);
+    }
+  }
 
-		const atualizaCar = await cn.json();
-		setCar(atualizaCar)
-	}
+  async function removeProd(productId: string) {
+    try {
+      const res = await fetch('https://acpteste.netlify.app/api/users/1/cart', {
+        method: 'DELETE',
+        body: JSON.stringify({ productId }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
-	async function removeProd(productId:string){
-		try{
-		const cn = await fetch("https://acpteste.netlify.app/api/users/1/cart",{
-			method: "DELETE", 
-			body: JSON.stringify({
-				productId
-			}),
-			headers:{
-				'Content-Type' : 'application/json'
-			}
-		});
+      const atualizado = await res.json();
+      setCar(atualizado);
+    } catch (error) {
+      console.error('Erro ao remover:', error);
+    }
+  }
 
-		const atualizaCar = await cn.json();				
-		setCar(atualizaCar)
-		}catch(e){
-			console.log("Atualizar "+ e)
-		}
-	}
+  function checkCar(productId: string) {
+    return carProd?.some((cp) => cp.id === productId);
+  }
 
-	function checkCar(productId: string){
-		try{
-			return carProd.some(cp => cp.id === productId)
-		}catch(e){
-			console.log("Erro check: "+e)
-		}
-	}
-
-	return (
-		<div>
-			{
-				produtos.map(p=>(
-					<>
-					<Link key={p.id} href={"/produtos/"+p.id}>
-						<Image src={"/"+p.imageUrl} alt="Imagem do produto" width={150} height={150}  />
-						<h2>{p.name}</h2>
-						<p>R${p.price}</p>	
-
-					{checkCar(p.id) ? (
-						<button className='p-4 m-4 bg-amber-400 text-indigo-700 hover:bg-amber-600' onClick={
-							(e) => { e.preventDefault(); 
-								removeProd(p.id);}
-							}>Desistir</button>
-					) : (
-						<button className='p-4 m-4 bg-amber-400 text-indigo-700 hover:bg-amber-600' onClick={
-							(e) => { e.preventDefault(); 
-							addToCart(p.id);}
-							}>Comprar
-						</button>
-					)}
-					
-					</Link>
-					</>
-				))
-			}
-		</div>
-	)
-
-	}
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {produtos.map((p) => (
+        <div
+          key={p.id}
+          className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition duration-300"
+        >
+          <Link href={`/produtos/${p.id}`} className="block p-4">
+            <div className="flex justify-center">
+              <Image
+                src={`/${p.imageUrl}`}
+                alt={`Imagem de ${p.name}`}
+                width={200}
+                height={200}
+                className="object-contain"
+              />
+            </div>
+            <h2 className="mt-4 text-xl font-semibold text-gray-800">{p.name}</h2>
+            <p className="text-gray-600">R$ {p.price.toFixed(2)}</p>
+          </Link>
+          <div className="px-4 pb-4">
+            {checkCar(p.id) ? (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  removeProd(p.id);
+                }}
+                className="w-full mt-2 py-2 rounded-xl bg-red-100 text-red-700 font-semibold hover:bg-red-200 transition"
+              >
+                Desistir
+              </button>
+            ) : (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  addToCart(p.id);
+                }}
+                className="w-full mt-2 py-2 rounded-xl bg-amber-400 text-indigo-800 font-semibold hover:bg-amber-500 transition"
+              >
+                Comprar
+              </button>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
