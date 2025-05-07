@@ -1,14 +1,8 @@
-import CartProd from "./carProd";
+// app/carrinho/page.tsx
+import dynamic from 'next/dynamic';
 
-export default async function CartPage(){
-	
-	const cn = await fetch("https://acpteste.netlify.app/api/users/1/cart", {
-		cache: "no-cache"
-	});
-	const carprodutos = await cn.json() 
+const CartProd = dynamic(() => import('./carProd'), { ssr: false });
 
-	return(
-		<CartProd prodcar={carprodutos} />
-	)
-	
+export default function CartPage() {
+  return <CartProd />;
 }
