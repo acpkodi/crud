@@ -1,17 +1,11 @@
 'use client';
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 
 export default function NavBar() {
-    const pathname = usePathname();
-    const router = useRouter();
-
     const handleCarrinhoClick = (e: { preventDefault: () => void; }) => {
-        if (pathname === '/carrinho') {
-            e.preventDefault();
-            router.refresh(); // Recarrega dados na mesma página (Next 13+ App Router)
-        }
+        e.preventDefault();
+        window.location.href = '/carrinho'; // força reload completo
     };
 
     return (
@@ -22,13 +16,13 @@ export default function NavBar() {
                         <Link href="/produtos" className="text-gray-700 hover:text-black">Produtos</Link>
                     </li>
                     <li>
-                        <Link
+                        <a
                             href="/carrinho"
                             onClick={handleCarrinhoClick}
                             className="text-gray-700 hover:text-black"
                         >
                             Carrinho
-                        </Link>
+                        </a>
                     </li>
                     <li>
                         <Link href="/checkout" className="text-gray-700 hover:text-black">Checkout</Link>
