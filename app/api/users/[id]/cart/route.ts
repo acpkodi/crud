@@ -81,8 +81,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Params 
   const cartProducts = await db.collection("produtos").find({ id: { $in: cartId } }).toArray();
   
   return new Response(
-    JSON.stringify({ message: "Produto removido com sucesso", products: cartProducts }),
-    {
+    JSON.stringify(cartProducts),{
       status: 200,
       headers: {
         'Content-Type': 'application/json',

@@ -37,7 +37,7 @@ export default function ListaProdutos({produtos, prodInicial}:{produtos: Product
 			}
 		});
 
-		const atualizaCar = await cn.json();
+		const atualizaCar = await cn.json();		
 		console.log("Resposta da API:", atualizaCar);
 		setCar(atualizaCar)
 		}catch(e){
