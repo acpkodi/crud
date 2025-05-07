@@ -4,7 +4,9 @@ export default async function ProdutosPage(){
 	const cn = await fetch("https://acpteste.netlify.app/api/produtos");
 	const prod = await cn.json();
 
-	const cn2 = await fetch("https://acpteste.netlify.app/api/users/1/cart");
+	const cn2 = await fetch("https://acpteste.netlify.app/api/users/1/cart",{
+		cache: "no-cache"
+	});
 	const cartProd = await cn2.json();
 
 	return (
