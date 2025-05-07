@@ -10,7 +10,8 @@ export default async function CartProd({ prodcar }:  { prodcar : Product[] }){
 	return (
 		<div>
 				<h1>Carrinho</h1>
-				<div className="grid place-items-center h-screen">
+				<div className="gh-screen flex items-center justify-center">
+				<div className="grid grid-cols-3 gap-6">
 				{cartProdutos.map(prod => (
 					<Link key={prod.id} href={"/produtos/" + prod.id}>
 						<div ><img className="w-40 h-40 shadow-md" src={"/" + prod.imageUrl} alt="Imagem" /></div>
@@ -18,6 +19,7 @@ export default async function CartProd({ prodcar }:  { prodcar : Product[] }){
 						<p>R${prod.price}</p>
 					</Link>
 				))}
+				</div>
 				</div>
 		</div>
 	)
