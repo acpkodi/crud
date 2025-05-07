@@ -46,7 +46,11 @@ export default function ListaProdutos({produtos, prodInicial}:{produtos: Product
 	}
 
 	function checkCar(productId: string){
-		return carProd.some(cp => cp.id === productId)
+		try{
+			return carProd.some(cp => cp.id === productId)
+		}catch(e){
+			console.log("Erro check: "+e)
+		}
 	}
 
 	return (
