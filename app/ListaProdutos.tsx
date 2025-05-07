@@ -24,6 +24,11 @@ export default function ListaProdutos({produtos, prodInicial}:{produtos: Product
 		const atualizaCar = await cn.json();
 		setCar(atualizaCar)
 	}
+
+	function checkCar(productId: string){
+		return carProd.some(cp => cp.id === productId)
+	}
+
 	return (
 		<div>
 			{
@@ -34,8 +39,20 @@ export default function ListaProdutos({produtos, prodInicial}:{produtos: Product
 						<h2>{p.name}</h2>
 						<p>R${p.price}</p>	
 
+					{checkCar(p.id) ? (
+						<button className='p-4 m-4 bg-amber-400 text-indigo-700 hover:bg-amber-600' onClick={
+							(e) => { e.preventDefault(); 
+							console.log("removendo teste");}
+							}>Desistir</button>
+					) : (
+						<button className='p-4 m-4 bg-amber-400 text-indigo-700 hover:bg-amber-600' onClick={
+							(e) => { e.preventDefault(); 
+							addToCart(p.id);}
+							}>Comprar
+						</button>
+					)}
+					
 					</Link>
-					<button className='p-4 m-4 bg-amber-400 text-indigo-700 hover:bg-amber-600' onClick={() => addToCart(p.id)}>Comprar</button>
 					</>
 				))
 			}

@@ -8,16 +8,16 @@ export default async function CartProd({ prodcar }:  { prodcar : Product[] }){
 	const [cartProdutos] = useState(prodcar);	
 
 	return (
-<>
-		<h1>Carrinho</h1>
-		{cartProdutos.map(prod => (
-			<Link key={prod.id} href={"/produtos/" + prod.id}>
-				<div ><img className="w-64 h-64 shadow-md" src={"/" + prod.imageUrl} alt="Imagem" /></div>
-				<h3>{prod.name}</h3>
-				<p>R${prod.price}</p>
-			</Link>
-		))}
-</>
-)
+		<div className="grid grid-cols-4 gap-4">
+				<h1>Carrinho</h1>
+				{cartProdutos.map(prod => (
+					<Link key={prod.id} href={"/produtos/" + prod.id}>
+						<div ><img className="w-64 h-64 shadow-md" src={"/" + prod.imageUrl} alt="Imagem" /></div>
+						<h3>{prod.name}</h3>
+						<p>R${prod.price}</p>
+					</Link>
+				))}
+		</div>
+	)
 	
 }
